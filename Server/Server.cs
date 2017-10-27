@@ -16,7 +16,7 @@ namespace Server
         TcpListener server;
         public Server()
         {
-            server = new TcpListener(IPAddress.Parse("127.0.0.1"), 9999);
+            server = new TcpListener(IPAddress.Any, 9999); //allows for receiving incoming connections across the network as well as on this computer
             server.Start();
         }
         public void Run()
@@ -25,7 +25,7 @@ namespace Server
             string message = client.Recieve();
             Respond(message);
         }
-        private void AcceptClient()
+        private void AcceptClient() //need to thread this? - second client cannot connect
         {
             TcpClient clientSocket = default(TcpClient);
             clientSocket = server.AcceptTcpClient();
@@ -37,5 +37,10 @@ namespace Server
         {
              client.Send(body);
         }
+
+        Dictionary<string, Client> users = new Dictionary<string, Client>(); 
+
+        Queue<Message> messages = new Queue<Message>();
+
     }
 }
