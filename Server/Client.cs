@@ -16,8 +16,23 @@ namespace Server
         {
             stream = Stream;
             client = Client;
-            UserId = "495933b6-1762-47a1-b655-483510072e73";
+            UserId = Guid.NewGuid().ToString();
         }
+
+        public string RequestNewUser()
+        {
+            Send("Welcome to the chatroom. Please enter a user name: ");
+            string userName = Recieve();
+            CreateNewUser(userName);
+            return userName;
+        }
+
+        private void CreateNewUser(string userName)
+        {
+            User newUser = new User();
+            newUser.GenerateNewUser(userName);
+        }
+
         public void Send(string Message)
         {
             byte[] message = Encoding.ASCII.GetBytes(Message);
@@ -25,12 +40,34 @@ namespace Server
         }
         public string Recieve()
         {
-            byte[] recievedMessage = new byte[256];
-            stream.Read(recievedMessage, 0, recievedMessage.Length);
-            string recievedMessageString = Encoding.ASCII.GetString(recievedMessage);
-            Console.WriteLine(recievedMessageString);
-            return recievedMessageString;
+            while (true)
+            {
+                try
+                {
+                    byte[] receivedMessage = new byte[256];
+                    stream.Read(receivedMessage, 0, receivedMessage.Length);
+                    string receivedMessageString = Encoding.ASCII.GetString(receivedMessage).Trim(new char[] { '\0' });
+                    Message message = new Message(this, receivedMessageString);
+                    Server.msgQueue.Enqueue(message);
+                    Console.WriteLine(receivedMessageString);
+                }
+                catch (Exception)
+                {
+                    Server.chatClientsList.Remove(this);
+                    Console.WriteLine("Chat User has disconnected their session.");
+                }
+            }
         }
+
+
+
+
+        //byte[] recievedMessage = new byte[256];
+        //    stream.Read(recievedMessage, 0, recievedMessage.Length);
+        //    string recievedMessageString = Encoding.ASCII.GetString(recievedMessage);
+        //    Console.WriteLine(recievedMessageString);
+        //    return recievedMessageString;
+        //}
 
     }
 }
