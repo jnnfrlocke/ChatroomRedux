@@ -10,17 +10,21 @@ namespace Server
     {
         Dictionary<Guid, string> userDictionary = new Dictionary<Guid, string>();
         Guid userId;
-
-        //public User()
-        //{
-
-        //}
-
+        
         public string GenerateNewUser(string userName)
         {
             userId = Guid.NewGuid();
             userDictionary.Add(userId, userName);
             return userId.ToString();
         }
+
+
+
+        //public User()
+        //{
+
+        //}
+
+
     }
 }

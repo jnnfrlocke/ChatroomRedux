@@ -13,12 +13,13 @@ namespace Server
     class Server
     {
         public static List<Client> chatClientsList = new List<Client>();
-        //public static Client client;
+        //Dictionary<string, Client> users = new Dictionary<string, Client>();
+        Queue<Message> messages = new Queue<Message>();
         TcpListener server;
         public static ConcurrentQueue<Message> msgQueue;
         public Server()
         {
-            server = new TcpListener(IPAddress.Any, 9999); //allows for receiving incoming connections across the network as well as on this computer
+            server = new TcpListener(IPAddress.Any, 9999); 
             msgQueue = new ConcurrentQueue<Message>();
             server.Start();
         }
@@ -37,11 +38,12 @@ namespace Server
                 Console.WriteLine("Connected");
                 NetworkStream stream = clientSocket.GetStream();
                 Client clientConnection = new Client(stream, clientSocket);
-                chatClientsList.Add(clientConnection);
-                Task getUser = Task.Run(() => GetUser(clientConnection));
-                getUser.Wait();
-                Task clientConnectionThread = Task.Run(() => clientConnection.Recieve());
-
+                chatClientsList.Add(clientConnection); //AddClientToDictionary(client);
+                GetUser(clientConnection);
+                //Task getUser = Task.Run(() => GetUser(clientConnection));
+                //getUser.Wait();
+                //Task clientConnectionThread = 
+                Task.Run(() => clientConnection.Recieve());
                 //clientConnectionThread.Start();
             }
         }
@@ -49,7 +51,7 @@ namespace Server
         private void GetUser(Client clientConnection)
         {
             Task<string> userName = Task.Run(() => clientConnection.RequestNewUser());
-            userName.Wait();
+            //userName.Wait();
             string name = userName.Result.Trim('\0');
             NewChatUserAlert(name, clientConnection);
         }
@@ -57,7 +59,9 @@ namespace Server
         private void NewChatUserAlert(string userName, Client client)
         {
             string msg = $"{userName} has joined the Chat.";
-            Task<string> message = Task.Run(() => client.Recieve());
+            client.Send(msg);
+            //Task<string> message = Task.Run(() => client.Recieve());
+            Console.WriteLine(msg);
         }
 
 
@@ -87,9 +91,9 @@ namespace Server
         //    return body;
         //}
 
-        Dictionary<string, Client> users = new Dictionary<string, Client>(); 
+        
 
-        Queue<Message> messages = new Queue<Message>();
+        //public static Client client;
 
     }
 }

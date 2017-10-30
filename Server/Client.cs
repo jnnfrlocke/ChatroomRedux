@@ -22,7 +22,10 @@ namespace Server
         public string RequestNewUser()
         {
             Send("Welcome to the chatroom. Please enter a user name: ");
-            string userName = Recieve();
+            byte[] receivedMessage = new byte[256];
+            stream.Read(receivedMessage, 0, receivedMessage.Length);
+            string userName = Encoding.ASCII.GetString(receivedMessage).Trim(new char[] { '\0' });
+            //Recieve(); //gets stuck here because of the while true
             CreateNewUser(userName);
             return userName;
         }

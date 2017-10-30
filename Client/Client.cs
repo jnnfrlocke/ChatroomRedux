@@ -18,6 +18,13 @@ namespace Client
             clientSocket.Connect(IPAddress.Parse(IP), port);
             stream = clientSocket.GetStream();
         }
+
+        public void RunClient()
+        {
+            Task.Run(() => Send());
+            Task running = Task.Run(() => Recieve());
+            running.Wait();
+        }
         public void Send()
         {
             while (true)
@@ -44,7 +51,8 @@ namespace Client
                 {
                     byte[] recievedMessage = new byte[256];
                     stream.Read(recievedMessage, 0, recievedMessage.Length);
-                    UI.DisplayMessage(Encoding.ASCII.GetString(recievedMessage));
+                    UI.DisplayMessage(Encoding.ASCII.GetString(recievedMessage)); //never goes beyone this
+
                 }
                 catch (SocketException e)
                 {
