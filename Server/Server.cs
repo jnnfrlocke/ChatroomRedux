@@ -13,8 +13,6 @@ namespace Server
     class Server
     {
         public static List<Client> chatClientsList = new List<Client>();
-        //Dictionary<string, Client> users = new Dictionary<string, Client>();
-        Queue<Message> messages = new Queue<Message>();
         TcpListener server;
         public static ConcurrentQueue<Message> msgQueue;
         public Server()
@@ -26,10 +24,9 @@ namespace Server
         public void Run()
         {
             Console.WriteLine("Now accepting clients on port 9999");
-            //message = client.Recieve();
             Parallel.Invoke(AcceptClient, Respond);
         }
-        protected void AcceptClient() // async? need to thread this? - second client cannot connect
+        protected void AcceptClient() 
         {
             while (true)
             {
@@ -38,20 +35,15 @@ namespace Server
                 Console.WriteLine("Connected");
                 NetworkStream stream = clientSocket.GetStream();
                 Client clientConnection = new Client(stream, clientSocket);
-                chatClientsList.Add(clientConnection); //AddClientToDictionary(client);
+                chatClientsList.Add(clientConnection); 
                 GetUser(clientConnection);
-                //Task getUser = Task.Run(() => GetUser(clientConnection));
-                //getUser.Wait();
-                //Task clientConnectionThread = 
                 Task.Run(() => clientConnection.Recieve());
-                //clientConnectionThread.Start();
             }
         }
         
         private void GetUser(Client clientConnection)
         {
             Task<string> userName = Task.Run(() => clientConnection.RequestNewUser());
-            //userName.Wait();
             string name = userName.Result.Trim('\0');
             NewChatUserAlert(name, clientConnection);
         }
@@ -59,9 +51,9 @@ namespace Server
         private void NewChatUserAlert(string userName, Client client)
         {
             string msg = $"{userName} has joined the Chat.";
-            client.Send(msg);
-            //Task<string> message = Task.Run(() => client.Recieve());
+            Message message = new Message(client, msg);
             Console.WriteLine(msg);
+            msgQueue.Enqueue(message);
         }
 
 
@@ -83,17 +75,5 @@ namespace Server
                 }
             }
         }
-
-
-        //public string Respond(string body)
-        //{
-        //    client.Send(body);
-        //    return body;
-        //}
-
-        
-
-        //public static Client client;
-
     }
 }
