@@ -20,15 +20,39 @@ namespace Client
         }
         public void Send()
         {
-            string messageString = UI.GetInput();
-            byte[] message = Encoding.ASCII.GetBytes(messageString);
-            stream.Write(message, 0, message.Count());
+            while (true)
+            {
+                try
+                {
+                    string messageString = UI.GetInput();
+                    byte[] message = Encoding.ASCII.GetBytes(messageString);
+                    stream.Write(message, 0, message.Count());
+                }
+                catch (SocketException e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.ReadKey();
+                    break;
+                }
+            }
         }
         public void Recieve()
         {
-            byte[] recievedMessage = new byte[256];
-            stream.Read(recievedMessage, 0, recievedMessage.Length);
-            UI.DisplayMessage(Encoding.ASCII.GetString(recievedMessage));
+            while (true)
+            {
+                try
+                {
+                    byte[] recievedMessage = new byte[256];
+                    stream.Read(recievedMessage, 0, recievedMessage.Length);
+                    UI.DisplayMessage(Encoding.ASCII.GetString(recievedMessage));
+                }
+                catch (SocketException e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.ReadKey();
+                    break;
+                }
+            }
         }
     }
 }

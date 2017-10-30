@@ -28,7 +28,7 @@ namespace Server
             //message = client.Recieve();
             Parallel.Invoke(AcceptClient, Respond);
         }
-        protected async void AcceptClient() //need to thread this? - second client cannot connect
+        protected void AcceptClient() // async? need to thread this? - second client cannot connect
         {
             while (true)
             {
