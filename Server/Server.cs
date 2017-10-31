@@ -64,8 +64,7 @@ namespace Server
                 Logger.Log(message, sw);
             }
         }
-
-
+        
         private void Respond()
         {
             while (true)

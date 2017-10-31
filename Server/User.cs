@@ -13,18 +13,20 @@ namespace Server
         
         public string GenerateNewUser(string userName)
         {
-            userId = Guid.NewGuid();
-            userDictionary.Add(userId, userName);
+            GenerateGuid();
+            AddUser(userName);
             return userId.ToString();
         }
 
+        public Guid GenerateGuid()
+        {
+            userId = Guid.NewGuid();
+            return userId;
+        }
 
-
-        //public User()
-        //{
-
-        //}
-
-
+        public void AddUser(string userName)
+        {
+            userDictionary.Add(userId, userName);
+        }
     }
 }

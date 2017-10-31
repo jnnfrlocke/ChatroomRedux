@@ -18,15 +18,6 @@ namespace Server
             w.WriteLine("  :{0}", logMessage);
             w.WriteLine("-------------------------------");
         }
-
-        public static void ReadLog(StreamReader r)
-        {
-            string line;
-            while ((line = r.ReadLine()) != null)
-            {
-                Console.WriteLine(line);
-            }
-        }
     }
 }
 
