@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -56,6 +57,14 @@ namespace Server
             msgQueue.Enqueue(message);
         }
 
+        private void LogQueue(string message)
+        {
+            using (StreamWriter sw = File.AppendText("log.txt"))
+            {
+                Logger.Log(message, sw);
+            }
+        }
+
 
         private void Respond()
         {
@@ -66,10 +75,10 @@ namespace Server
                 {
                     foreach (Client chatUser in chatClientsList)
                     {
-                        //Send to everyone except the sender of the message.
                         if (chatUser != msg.sender)
                         {
                             chatUser.Send(msg.Body);
+                            LogQueue(msg.Body);
                         }
                     }
                 }

@@ -25,7 +25,6 @@ namespace Server
             byte[] receivedMessage = new byte[256];
             stream.Read(receivedMessage, 0, receivedMessage.Length);
             string userName = Encoding.ASCII.GetString(receivedMessage).Trim(new char[] { '\0' });
-            //Recieve(); //gets stuck here because of the while true
             CreateNewUser(userName);
             return userName;
         }
@@ -61,16 +60,5 @@ namespace Server
                 }
             }
         }
-
-
-
-
-        //byte[] recievedMessage = new byte[256];
-        //    stream.Read(recievedMessage, 0, recievedMessage.Length);
-        //    string recievedMessageString = Encoding.ASCII.GetString(recievedMessage);
-        //    Console.WriteLine(recievedMessageString);
-        //    return recievedMessageString;
-        //}
-
     }
 }
